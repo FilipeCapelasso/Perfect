@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfect CS2 — Void Hybrid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04040a;
+    --bg2: #080812;
+    --surface: #0c0c1a;
+    --card: #0f0f1e;
+    --purple: #9b30ff;
+    --purple-dim: #6b1fd6;
+    --cyan: #00e5ff;
+    --pink: #ff2d78;
+    --glow-purple: 0 0 20px #9b30ff88, 0 0 60px #9b30ff33;
+    --glow-cyan: 0 0 20px #00e5ff88, 0 0 60px #00e5ff22;
+    --border: rgba(155, 48, 255, 0.25);
+    --text: #e0e0f0;
+    --muted: #7070a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── CANVAS PARTICLES ── */
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .45; }
+
+  /* ── SCANLINES OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.04) 2px, rgba(0,0,0,.04) 4px);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3rem;
+    height: 64px;
+    background: rgba(4,4,10,.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 1.1rem;
+    letter-spacing: .2em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    cursor: pointer;
+  }
+  .nav-logo span { color: var(--pink); -webkit-text-fill-color: var(--pink); }
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    font-size: .85rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .nav-discord {
+    padding: .45rem 1.4rem;
+    background: transparent;
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: .8rem; letter-spacing: .15em; text-transform: uppercase;
+    border-radius: 3px; cursor: pointer;
+    transition: all .25s;
+  }
+  .nav-discord:hover {
+    background: var(--purple);
+    color: #fff;
+    box-shadow: var(--glow-purple);
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; position: relative; z-index: 2; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    height: 520px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(155,48,255,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(0,229,255,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 50%, rgba(255,45,120,.06) 0%, transparent 60%);
+  }
+  /* animated grid */
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(155,48,255,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155,48,255,.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove { to { background-position: 60px 60px; } }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .75rem; letter-spacing: .3em;
+    color: var(--cyan); opacity: .8;
+    margin-bottom: 1rem;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-weight: 900; line-height: .95;
+    letter-spacing: -.01em;
+    text-align: center;
+    animation: fadeUp .8s ease .1s both;
+  }
+  .hero-title .word-perfect {
+    display: block;
+    background: linear-gradient(135deg, #fff 20%, var(--purple) 60%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(155,48,255,.5));
+  }
+  .hero-title .word-cs2 {
+    display: block;
+    font-size: .45em;
+    letter-spacing: .35em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-top: .2em;
+  }
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.05rem; font-weight: 300;
+    color: var(--muted); letter-spacing: .06em;
+    text-align: center;
+    animation: fadeUp .8s ease .2s both;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 600; }
+  .hero-cta {
+    margin-top: 2.5rem;
+    display: flex; gap: 1rem;
+    animation: fadeUp .8s ease .3s both;
+  }
+  .btn-primary {
+    padding: .75rem 2.2rem;
+    background: linear-gradient(135deg, var(--purple-dim), var(--purple));
+    color: #fff; border: none;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: .9rem; letter-spacing: .18em; text-transform: uppercase;
+    border-radius: 4px; cursor: pointer;
+    box-shadow: 0 0 25px rgba(155,48,255,.45);
+    transition: all .25s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(155,48,255,.7); }
+  .btn-secondary {
+    padding: .75rem 2.2rem;
+    background: transparent;
+    color: var(--cyan); border: 1px solid var(--cyan);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: .9rem; letter-spacing: .18em; text-transform: uppercase;
+    border-radius: 4px; cursor: pointer;
+    transition: all .25s;
+  }
+  .btn-secondary:hover { background: rgba(0,229,255,.08); box-shadow: var(--glow-cyan); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-header {
+    text-align: center;
+    padding: 4.5rem 0 3rem;
+  }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .7rem; letter-spacing: .3em;
+    color: var(--cyan); text-transform: uppercase;
+    margin-bottom: .75rem;
+  }
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700; letter-spacing: .06em;
+    color: #fff;
+  }
+  .section-title span {
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .section-divider {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    margin: 1.2rem auto 0;
+    border-radius: 2px;
+  }
+
+  /* ── PRODUCTS GRID ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1300px; margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .product-card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid rgba(155,48,255,.2);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .product-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(155,48,255,.06), rgba(0,229,255,.04));
+    opacity: 0; transition: opacity .35s;
+  }
+  .product-card:hover { transform: translateY(-6px); border-color: var(--purple); box-shadow: 0 0 40px rgba(155,48,255,.25), 0 20px 60px rgba(0,0,0,.5); }
+  .product-card:hover::before { opacity: 1; }
+  .product-card.featured { border-color: rgba(255,45,120,.4); grid-column: 1 / -1; }
+  .product-card.featured:hover { border-color: var(--pink); box-shadow: 0 0 40px rgba(255,45,120,.25), 0 20px 60px rgba(0,0,0,.5); }
+
+  .card-badge {
+    position: absolute; top: 1.2rem; right: 1.2rem; z-index: 2;
+    padding: .25rem .75rem;
+    background: var(--pink);
+    color: #fff; font-family: 'Share Tech Mono', monospace;
+    font-size: .65rem; letter-spacing: .1em;
+    border-radius: 3px;
+    box-shadow: 0 0 15px rgba(255,45,120,.5);
+  }
+
+  .card-thumb {
+    width: 100%; height: 200px;
+    background: linear-gradient(135deg, #0a0a18, #12122a);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .featured .card-thumb { height: 260px; }
+  .card-thumb-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(155,48,255,.15), transparent 70%);
+  }
+  .card-thumb-icon {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 3rem;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(155,48,255,.6));
+    user-select: none;
+  }
+  .featured .card-thumb-icon { font-size: 4.5rem; }
+
+  /* animated ring on hover */
+  .card-ring {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 2px solid rgba(155,48,255,.3);
+    animation: spin 8s linear infinite;
+  }
+  .card-ring:nth-child(2) {
+    width: 180px; height: 180px;
+    border-color: rgba(0,229,255,.15);
+    animation-direction: reverse; animation-duration: 12s;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .card-body { padding: 1.5rem; }
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    letter-spacing: .08em; color: #fff;
+    margin-bottom: .4rem;
+  }
+  .card-desc { font-size: .9rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.2rem; }
+  .card-price-row { display: flex; align-items: center; justify-content: space-between; }
+  .card-starting {
+    font-size: .72rem; color: var(--muted); letter-spacing: .08em; font-family: 'Share Tech Mono', monospace;
+  }
+  .card-price {
+    font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.1rem;
+    color: var(--cyan);
+  }
+  .card-cta {
+    display: flex; align-items: center; gap: .5rem;
+    margin-top: 1rem;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: .8rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--purple);
+    border: none; background: none; cursor: pointer;
+    padding: 0; transition: color .2s;
+  }
+  .card-cta svg { transition: transform .2s; }
+  .product-card:hover .card-cta { color: var(--cyan); }
+  .product-card:hover .card-cta svg { transform: translateX(4px); }
+
+  .card-features {
+    display: flex; flex-wrap: wrap; gap: .35rem;
+    margin-bottom: 1rem;
+  }
+  .feat-pill {
+    padding: .2rem .65rem;
+    background: rgba(155,48,255,.1);
+    border: 1px solid rgba(155,48,255,.25);
+    border-radius: 20px;
+    font-size: .72rem; color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: .05em;
+  }
+
+  /* ── PRODUCT DETAIL PAGE ── */
+  .detail-hero {
+    position: relative;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .detail-hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 70% at 50% -10%, rgba(155,48,255,.2), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 85% 50%, rgba(0,229,255,.07), transparent 60%);
+  }
+  .detail-hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(155,48,255,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(155,48,255,.06) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .detail-back {
+    position: absolute; top: 2rem; left: 2rem; z-index: 5;
+    display: flex; align-items: center; gap: .5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .75rem; letter-spacing: .12em; color: var(--muted);
+    background: none; border: none; cursor: pointer;
+    transition: color .2s;
+  }
+  .detail-back:hover { color: var(--cyan); }
+  .detail-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .7rem; letter-spacing: .3em;
+    color: var(--cyan); margin-bottom: .75rem;
+    position: relative; z-index: 2;
+  }
+  .detail-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    background: linear-gradient(135deg, #fff 30%, var(--purple) 70%, var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(155,48,255,.45));
+    position: relative; z-index: 2;
+  }
+  .detail-tagline {
+    margin-top: 1rem; font-size: 1.1rem;
+    color: var(--muted); position: relative; z-index: 2;
+  }
+
+  /* pricing */
+  .pricing-section {
+    max-width: 900px; margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+  }
+  .price-card {
+    background: var(--card);
+    border: 1px solid rgba(155,48,255,.2);
+    border-radius: 10px;
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    transition: all .3s;
+    position: relative; overflow: hidden;
+  }
+  .price-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+    opacity: 0; transition: opacity .3s;
+  }
+  .price-card:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: 0 0 30px rgba(155,48,255,.2); }
+  .price-card:hover::before { opacity: 1; }
+  .price-card.recommended {
+    border-color: rgba(155,48,255,.5);
+    background: linear-gradient(145deg, #0f0f20, #141428);
+  }
+  .price-card.recommended::before { opacity: 1; }
+  .rec-badge {
+    position: absolute; top: -1px; right: 1.5rem;
+    background: linear-gradient(90deg, var(--purple-dim), var(--purple));
+    color: #fff; font-size: .62rem; letter-spacing: .1em;
+    padding: .25rem .7rem;
+    font-family: 'Share Tech Mono', monospace;
+    border-radius: 0 0 6px 6px;
+  }
+  .price-period {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .72rem; letter-spacing: .2em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: .75rem;
+  }
+  .price-value {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 2.2rem;
+    color: #fff; line-height: 1;
+  }
+  .price-value .currency { font-size: .8rem; vertical-align: super; color: var(--muted); }
+  .price-btn {
+    display: block; width: 100%;
+    margin-top: 1.5rem;
+    padding: .65rem;
+    background: transparent;
+    border: 1px solid rgba(155,48,255,.4);
+    color: var(--purple);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: .85rem; letter-spacing: .15em; text-transform: uppercase;
+    border-radius: 5px; cursor: pointer;
+    transition: all .25s;
+  }
+  .price-btn:hover, .price-card.recommended .price-btn {
+    background: linear-gradient(135deg, var(--purple-dim), var(--purple));
+    border-color: var(--purple);
+    color: #fff; box-shadow: var(--glow-purple);
+  }
+
+  /* feature breakdown */
+  .features-section {
+    max-width: 1200px; margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .feat-group {
+    background: var(--card);
+    border: 1px solid rgba(155,48,255,.12);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  .feat-group-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700; font-size: .8rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 1rem;
+    padding-bottom: .6rem;
+    border-bottom: 1px solid rgba(0,229,255,.15);
+  }
+  .feat-item {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .88rem; color: var(--muted);
+    padding: .3rem 0;
+    font-family: 'Rajdhani', sans-serif; font-weight: 400;
+  }
+  .feat-item::before {
+    content: '';
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--purple); flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 2;
+    border-top: 1px solid rgba(155,48,255,.12);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  footer .footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900; font-size: 1.4rem; letter-spacing: .2em;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: .75rem;
+  }
+  footer p { color: var(--muted); font-size: .85rem; }
+
+  /* ── GLITCH ── */
+  .glitch {
+    position: relative;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #fff 30%, var(--purple) 70%, var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .glitch::before { animation: glitch1 3s infinite; clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+  .glitch::after  { animation: glitch2 3s infinite; clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+  @keyframes glitch1 {
+    0%,90%,100% { transform: none; opacity: 0; }
+    92% { transform: translate(-3px, 1px) skew(-5deg); opacity: .7; }
+    95% { transform: translate(2px,-1px); }
+  }
+  @keyframes glitch2 {
+    0%,88%,100% { transform: none; opacity: 0; }
+    90% { transform: translate(3px,-2px) skew(3deg); opacity: .5; }
+    93% { transform: translate(-2px); }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--purple-dim); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">PERFECT<span>.</span>CS2</div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home');return false">Início</a></li>
+    <li><a href="#" onclick="showPage('home');return false">Produtos</a></li>
+  </ul>
+  <button class="nav-discord" onclick="openDiscord()">Discord</button>
+</nav>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div id="page-home" class="page active">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-eyebrow">// POWERED BY VOID HYBRID //</div>
+    <h1 class="hero-title">
+      <span class="word-perfect glitch" data-text="PERFECT">PERFECT</span>
+      <span class="word-cs2">CS2</span>
+    </h1>
+    <p class="hero-sub">O software mais avançado para <strong>Counter-Strike 2</strong>.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Ver Planos</button>
+      <button class="btn-secondary" onclick="openDiscord()">Discord</button>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <div id="produtos">
+    <div class="section-header">
+      <div class="section-tag">// selecione seu plano //</div>
+      <h2 class="section-title">Escolha sua <span>Vantagem</span></h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="products-grid">
+
+      <!-- Inventory Changer -->
+      <div class="product-card" onclick="showPage('inventory')">
+        <div class="card-thumb">
+          <div class="card-thumb-glow"></div>
+          <div class="card-ring"></div>
+          <div class="card-ring"></div>
+          <div class="card-thumb-icon">INV</div>
+        </div>
+        <div class="card-body">
+          <div class="card-features">
+            <span class="feat-pill">Weapon</span>
+            <span class="feat-pill">Knife</span>
+            <span class="feat-pill">Gloves</span>
+            <span class="feat-pill">Agent</span>
+            <span class="feat-pill">Sticker</span>
+          </div>
+          <div class="card-title">Inventory Changer</div>
+          <p class="card-desc">Jogue com qualquer skin do seu sonho. Mude armas, facas, luvas e agentes em tempo real.</p>
+          <div class="card-price-row">
+            <div>
+              <div class="card-starting">A partir de</div>
+              <div class="card-price">R$ 9,90</div>
+            </div>
+            <button class="card-cta">
+              Ver Plano
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wall ESP -->
+      <div class="product-card" onclick="showPage('wall')">
+        <div class="card-thumb">
+          <div class="card-thumb-glow"></div>
+          <div class="card-ring"></div>
+          <div class="card-ring"></div>
+          <div class="card-thumb-icon">ESP</div>
+        </div>
+        <div class="card-body">
+          <div class="card-features">
+            <span class="feat-pill">ESP Target</span>
+            <span class="feat-pill">Skeleton</span>
+            <span class="feat-pill">Health</span>
+            <span class="feat-pill">Chams</span>
+          </div>
+          <div class="card-title">Wall — ESP</div>
+          <p class="card-desc">Veja os inimigos através das paredes com ESP completo. Target box, skeleton, health e muito mais.</p>
+          <div class="card-price-row">
+            <div>
+              <div class="card-starting">A partir de</div>
+              <div class="card-price">R$ 17,90</div>
+            </div>
+            <button class="card-cta">
+              Ver Plano
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wall + Inventory -->
+      <div class="product-card" onclick="showPage('wall-inv')">
+        <div class="card-badge">COMBO</div>
+        <div class="card-thumb">
+          <div class="card-thumb-glow"></div>
+          <div class="card-ring"></div>
+          <div class="card-ring"></div>
+          <div class="card-thumb-icon">W+I</div>
+        </div>
+        <div class="card-body">
+          <div class="card-features">
+            <span class="feat-pill">ESP</span>
+            <span class="feat-pill">Inventory</span>
+            <span class="feat-pill">Chams</span>
+            <span class="feat-pill">Visual</span>
+          </div>
+          <div class="card-title">Wall + Inventory Changer</div>
+          <p class="card-desc">Combo perfeito: ESP avançado combinado com troca de inventário completa numa única licença.</p>
+          <div class="card-price-row">
+            <div>
+              <div class="card-starting">A partir de</div>
+              <div class="card-price">R$ 27,90</div>
+            </div>
+            <button class="card-cta">
+              Ver Plano
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aimbot -->
+      <div class="product-card" onclick="showPage('aimbot')">
+        <div class="card-thumb">
+          <div class="card-thumb-glow"></div>
+          <div class="card-ring"></div>
+          <div class="card-ring"></div>
+          <div class="card-thumb-icon">AIM</div>
+        </div>
+        <div class="card-body">
+          <div class="card-features">
+            <span class="feat-pill">Legitbot</span>
+            <span class="feat-pill">Triggerbot</span>
+            <span class="feat-pill">RCS</span>
+            <span class="feat-pill">Anti-Aim</span>
+          </div>
+          <div class="card-title">Aimbot</div>
+          <p class="card-desc">Mira humanizada com Aimbot e Triggerbot. Tecnologia avançada de suavização para parecer natural.</p>
+          <div class="card-price-row">
+            <div>
+              <div class="card-starting">A partir de</div>
+              <div class="card-price">R$ 19,90</div>
+            </div>
+            <button class="card-cta">
+              Ver Plano
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MASTER - featured -->
+      <div class="product-card featured" onclick="showPage('master')">
+        <div class="card-badge">MAIS COMPLETO</div>
+        <div class="card-thumb">
+          <div class="card-thumb-glow"></div>
+          <div class="card-ring"></div>
+          <div class="card-ring"></div>
+          <div class="card-thumb-icon">MASTER</div>
+        </div>
+        <div class="card-body">
+          <div class="card-features">
+            <span class="feat-pill">Legitbot</span>
+            <span class="feat-pill">Ragebot</span>
+            <span class="feat-pill">Anti-Aim</span>
+            <span class="feat-pill">ESP</span>
+            <span class="feat-pill">Inventory</span>
+            <span class="feat-pill">Visual</span>
+            <span class="feat-pill">Movement</span>
+            <span class="feat-pill">Misc</span>
+          </div>
+          <div class="card-title">Master — Tudo Incluso</div>
+          <p class="card-desc">O pacote definitivo. Acesso completo a todas as funcionalidades: Aimbot, Ragebot, Anti-Aim, ESP, Inventory Changer, Bunny Hop, Auto Strafe e muito mais.</p>
+          <div class="card-price-row">
+            <div>
+              <div class="card-starting">A partir de</div>
+              <div class="card-price">R$ 47,90</div>
+            </div>
+            <button class="card-cta">
+              Ver Plano
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<!-- ══════════ INVENTORY CHANGER PAGE ══════════ -->
+<div id="page-inventory" class="page">
+  <div class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-grid"></div>
+    <button class="detail-back" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
+    <div class="detail-tag">// PERFECT CS2 //</div>
+    <h1 class="detail-name">Inventory Changer</h1>
+    <p class="detail-tagline">Jogue com qualquer skin do seu sonho.</p>
+  </div>
+
+  <div class="pricing-section">
+    <div class="price-card">
+      <div class="price-period">4 Dias</div>
+      <div class="price-value"><span class="currency">R$</span> 9,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card recommended">
+      <div class="rec-badge">POPULAR</div>
+      <div class="price-period">1 Mês</div>
+      <div class="price-value"><span class="currency">R$</span> 37,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card">
+      <div class="price-period">Vitalício</div>
+      <div class="price-value"><span class="currency">R$</span> 67,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header" style="padding-top:1rem">
+      <div class="section-tag">// funcionalidades //</div>
+      <h2 class="section-title">O que está <span>incluído</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat-group">
+        <div class="feat-group-title">Inventory Changer</div>
+        <div class="feat-item">Weapon Skins</div>
+        <div class="feat-item">Knife</div>
+        <div class="feat-item">Gloves</div>
+        <div class="feat-item">Agent</div>
+        <div class="feat-item">Sticker</div>
+        <div class="feat-item">Seed / Wear</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Configs</div>
+        <div class="feat-item">Create</div>
+        <div class="feat-item">Import</div>
+        <div class="feat-item">Save</div>
+        <div class="feat-item">Rename</div>
+        <div class="feat-item">Share Code</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Compatibilidade</div>
+        <div class="feat-item">Nvidia, AMD, Intel, Xeon</div>
+        <div class="feat-item">Windows 8, 10, 11</div>
+        <div class="feat-item">Anti-VAC incluso</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<!-- ══════════ WALL PAGE ══════════ -->
+<div id="page-wall" class="page">
+  <div class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-grid"></div>
+    <button class="detail-back" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
+    <div class="detail-tag">// PERFECT CS2 //</div>
+    <h1 class="detail-name">Wall — ESP</h1>
+    <p class="detail-tagline">Veja os inimigos através das paredes.</p>
+  </div>
+
+  <div class="pricing-section">
+    <div class="price-card">
+      <div class="price-period">4 Dias</div>
+      <div class="price-value"><span class="currency">R$</span> 17,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card recommended">
+      <div class="rec-badge">POPULAR</div>
+      <div class="price-period">1 Mês</div>
+      <div class="price-value"><span class="currency">R$</span> 37,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card">
+      <div class="price-period">Vitalício</div>
+      <div class="price-value"><span class="currency">R$</span> 89,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header" style="padding-top:1rem">
+      <div class="section-tag">// funcionalidades //</div>
+      <h2 class="section-title">O que está <span>incluído</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat-group">
+        <div class="feat-group-title">Visuals — ESP</div>
+        <div class="feat-item">Target</div>
+        <div class="feat-item">Box Type</div>
+        <div class="feat-item">Filled Box</div>
+        <div class="feat-item">Name</div>
+        <div class="feat-item">Health</div>
+        <div class="feat-item">Skeleton</div>
+        <div class="feat-item">Head Circle</div>
+        <div class="feat-item">Snapline</div>
+        <div class="feat-item">Weapon Active</div>
+        <div class="feat-item">Weapon Inventory</div>
+        <div class="feat-item">Perfect User</div>
+        <div class="feat-item">Armor</div>
+        <div class="feat-item">Flashed</div>
+        <div class="feat-item">Defusing / Reloading / Scoped</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Chams</div>
+        <div class="feat-item">Visible</div>
+        <div class="feat-item">Material, Flat, Glow</div>
+        <div class="feat-item">Occluded Camera Chams</div>
+        <div class="feat-item">View Model</div>
+        <div class="feat-item">Hands World Visual</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Visual</div>
+        <div class="feat-item">Force Crosshair</div>
+        <div class="feat-item">Pen. Crosshair</div>
+        <div class="feat-item">Field Of View</div>
+        <div class="feat-item">View Model FOV</div>
+        <div class="feat-item">View Model X / Y / Z</div>
+        <div class="feat-item">Third Person</div>
+        <div class="feat-item">Distance</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<!-- ══════════ WALL + INVENTORY PAGE ══════════ -->
+<div id="page-wall-inv" class="page">
+  <div class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-grid"></div>
+    <button class="detail-back" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
+    <div class="detail-tag">// PERFECT CS2 — COMBO //</div>
+    <h1 class="detail-name">Wall + Inventory</h1>
+    <p class="detail-tagline">ESP avançado com troca de inventário completa.</p>
+  </div>
+
+  <div class="pricing-section">
+    <div class="price-card">
+      <div class="price-period">7 Dias</div>
+      <div class="price-value"><span class="currency">R$</span> 27,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card recommended">
+      <div class="rec-badge">POPULAR</div>
+      <div class="price-period">1 Mês</div>
+      <div class="price-value"><span class="currency">R$</span> 40,00</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card">
+      <div class="price-period">Vitalício</div>
+      <div class="price-value"><span class="currency">R$</span> 99,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header" style="padding-top:1rem">
+      <div class="section-tag">// funcionalidades //</div>
+      <h2 class="section-title">O que está <span>incluído</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat-group">
+        <div class="feat-group-title">ESP</div>
+        <div class="feat-item">Target / Box Type / Filled Box</div>
+        <div class="feat-item">Name / Health / Skeleton</div>
+        <div class="feat-item">Head Circle / Snapline</div>
+        <div class="feat-item">Weapon Active / Inventory</div>
+        <div class="feat-item">Armor / Flashed / Defusing</div>
+        <div class="feat-item">Reloading / Scoped / Has C4</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Inventory Changer</div>
+        <div class="feat-item">Weapon / Knife / Gloves</div>
+        <div class="feat-item">Agent / Sticker</div>
+        <div class="feat-item">Seed / Wear</div>
+        <div class="feat-item">Create / Import / Save</div>
+        <div class="feat-item">Rename / Share Code</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Visual</div>
+        <div class="feat-item">Force Crosshair</div>
+        <div class="feat-item">Pan. Crosshair</div>
+        <div class="feat-item">Field Of View</div>
+        <div class="feat-item">View Model FOV / X / Y / Z</div>
+        <div class="feat-item">Third Person / Distance</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Chams & World</div>
+        <div class="feat-item">Visible / Occluded</div>
+        <div class="feat-item">Material, Flat, Glow</div>
+        <div class="feat-item">Camera Chams / View Model</div>
+        <div class="feat-item">Bomb / Projectile</div>
+        <div class="feat-item">Dropped Items / Grenade Trajectory</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Ambiance</div>
+        <div class="feat-item">World Modulation</div>
+        <div class="feat-item">Exposure 0.0–1.0</div>
+        <div class="feat-item">Lightning / Sun and Clouds</div>
+        <div class="feat-item">Skybox Modulation</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<!-- ══════════ AIMBOT PAGE ══════════ -->
+<div id="page-aimbot" class="page">
+  <div class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-grid"></div>
+    <button class="detail-back" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
+    <div class="detail-tag">// PERFECT CS2 //</div>
+    <h1 class="detail-name">Aimbot</h1>
+    <p class="detail-tagline">Mira humanizada com tecnologia avançada.</p>
+  </div>
+
+  <div class="pricing-section">
+    <div class="price-card">
+      <div class="price-period">4 Dias</div>
+      <div class="price-value"><span class="currency">R$</span> 19,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card recommended">
+      <div class="rec-badge">POPULAR</div>
+      <div class="price-period">1 Mês</div>
+      <div class="price-value"><span class="currency">R$</span> 27,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card">
+      <div class="price-period">Vitalício</div>
+      <div class="price-value"><span class="currency">R$</span> 70,00</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header" style="padding-top:1rem">
+      <div class="section-tag">// funcionalidades //</div>
+      <h2 class="section-title">O que está <span>incluído</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat-group">
+        <div class="feat-group-title">Legitbot</div>
+        <div class="feat-item">Aimbot</div>
+        <div class="feat-item">Weapon Group</div>
+        <div class="feat-item">Enabled / Auto Aiming</div>
+        <div class="feat-item">Draw FOV / FOV</div>
+        <div class="feat-item">Smooth X / Smooth Y</div>
+        <div class="feat-item">Hitbox</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Triggerbot</div>
+        <div class="feat-item">Enabled (Bind System)</div>
+        <div class="feat-item">Delay</div>
+        <div class="feat-item">Min Damage</div>
+        <div class="feat-item">Hitbox / RCS</div>
+        <div class="feat-item">Enable / Standalone</div>
+        <div class="feat-item">After Bullet</div>
+        <div class="feat-item">Compensate X / Y</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">ESP incluído</div>
+        <div class="feat-item">Target / Box Type</div>
+        <div class="feat-item">Name / Health / Skeleton</div>
+        <div class="feat-item">Head Circle / Snapline</div>
+        <div class="feat-item">Weapon Active / Inventory</div>
+        <div class="feat-item">Armor / Scoped / Has Defuser</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Inventory Changer</div>
+        <div class="feat-item">Weapon / Knife / Gloves</div>
+        <div class="feat-item">Agent / Sticker / Seed / Wear</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<!-- ══════════ MASTER PAGE ══════════ -->
+<div id="page-master" class="page">
+  <div class="detail-hero">
+    <div class="detail-hero-bg"></div>
+    <div class="detail-hero-grid"></div>
+    <button class="detail-back" onclick="showPage('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar
+    </button>
+    <div class="detail-tag">// PERFECT CS2 — PRODUTO MAIS COMPLETO //</div>
+    <h1 class="detail-name">Master</h1>
+    <p class="detail-tagline">Acesso total. Sem compromisso.</p>
+  </div>
+
+  <div class="pricing-section">
+    <div class="price-card">
+      <div class="price-period">7 Dias</div>
+      <div class="price-value"><span class="currency">R$</span> 47,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card recommended">
+      <div class="rec-badge">MELHOR VALOR</div>
+      <div class="price-period">1 Mês</div>
+      <div class="price-value"><span class="currency">R$</span> 127,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+    <div class="price-card">
+      <div class="price-period">Vitalício</div>
+      <div class="price-value"><span class="currency">R$</span> 299,90</div>
+      <button class="price-btn" onclick="openDiscord()">Comprar</button>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="section-header" style="padding-top:1rem">
+      <div class="section-tag">// funcionalidades completas //</div>
+      <h2 class="section-title">Tudo que você <span>precisa</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat-group">
+        <div class="feat-group-title">Legitbot</div>
+        <div class="feat-item">Aimbot / Weapon Group</div>
+        <div class="feat-item">Auto Aiming / Draw FOV</div>
+        <div class="feat-item">FOV / Smooth X / Smooth Y</div>
+        <div class="feat-item">Hitbox / Triggerbot</div>
+        <div class="feat-item">Delay / Min Damage / RCS</div>
+        <div class="feat-item">Standalone / Compensate X/Y</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Ragebot</div>
+        <div class="feat-item">Weapon Group / General</div>
+        <div class="feat-item">Enabled / Limit FOV / FOV</div>
+        <div class="feat-item">Silent / Auto Fire</div>
+        <div class="feat-item">Auto Scope / No Spread</div>
+        <div class="feat-item">Wall Penetration / Auto Stop</div>
+        <div class="feat-item">Anti-Aim: Pitch, Yaw, Jitter</div>
+        <div class="feat-item">Slow Walk</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Visuals — ESP</div>
+        <div class="feat-item">Target / Box Type / Filled Box</div>
+        <div class="feat-item">Name / Health / Skeleton</div>
+        <div class="feat-item">Head Circle / Snapline</div>
+        <div class="feat-item">Weapon Active / Inventory</div>
+        <div class="feat-item">Perfect User / Armor / Flashed</div>
+        <div class="feat-item">Defusing / Reloading / Scoped</div>
+        <div class="feat-item">Has C4 / Has Defuser</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Chams & Visual</div>
+        <div class="feat-item">Visible / Material / Flat / Glow</div>
+        <div class="feat-item">Occluded / Camera Chams</div>
+        <div class="feat-item">View Model / Hands</div>
+        <div class="feat-item">Force Crosshair / Pen. Crosshair</div>
+        <div class="feat-item">Field Of View / View Model FOV</div>
+        <div class="feat-item">X / Y / Z / Third Person</div>
+        <div class="feat-item">Distance</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Inventory Changer</div>
+        <div class="feat-item">Weapon / Knife / Gloves</div>
+        <div class="feat-item">Agent / Sticker / Seed / Wear</div>
+        <div class="feat-item">Create / Import / Save</div>
+        <div class="feat-item">Rename / Share Code</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">ESP — World</div>
+        <div class="feat-item">Bomb / Projectile</div>
+        <div class="feat-item">Dropped Items / View Distance</div>
+        <div class="feat-item">Grenade Trajectory / Warning</div>
+        <div class="feat-item">Out Of View Arrow</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Ambiance</div>
+        <div class="feat-item">World Modulation</div>
+        <div class="feat-item">Exposure 0.0–1.0</div>
+        <div class="feat-item">Lightning / Sun and Clouds</div>
+        <div class="feat-item">Skybox Modulation</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Player & Movement</div>
+        <div class="feat-item">Hit Effect / Kill Effect</div>
+        <div class="feat-item">Remove View Punch / Flash / Smoke</div>
+        <div class="feat-item">Remove Scope / Zoom / Legs</div>
+        <div class="feat-item">Bunny Hop / Auto Strafe</div>
+        <div class="feat-item">Jump Bug</div>
+      </div>
+      <div class="feat-group">
+        <div class="feat-group-title">Miscellaneous</div>
+        <div class="feat-item">Show Spectators / Show Keybinds</div>
+        <div class="feat-item">Auto-Accept Match</div>
+        <div class="feat-item">Hit Sound / Kill Sound / Volume</div>
+        <div class="feat-item">Chat Spam / Kill Say</div>
+        <div class="feat-item">Safe Mode / OBS Bypass</div>
+        <div class="feat-item">Unlock Loadout</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">PERFECT.CS2</div>
+    <p>Powered by Void Hybrid &nbsp;·&nbsp; Todos os direitos reservados</p>
+  </footer>
+</div>
+
+<script>
+// ── ROUTING ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if (el) { el.classList.add('active'); window.scrollTo({top:0, behavior:'smooth'}); }
+}
+
+function openDiscord() {
+  // Replace with actual Discord link
+  window.open('https://discord.gg/', '_blank');
+}
+
+// ── PARTICLES ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, dots = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function rand(a, b) { return a + Math.random() * (b - a); }
+
+for (let i = 0; i < 90; i++) {
+  dots.push({
+    x: rand(0, W), y: rand(0, H),
+    vx: rand(-.2, .2), vy: rand(-.15, .15),
+    r: rand(.5, 2),
+    hue: Math.random() < .6 ? 270 : 190,
+    alpha: rand(.2, .7)
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  dots.forEach(d => {
+    d.x += d.vx; d.y += d.vy;
+    if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+    if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${d.hue},100%,70%,${d.alpha})`;
+    ctx.fill();
+  });
+  // lines between close dots
+  for (let i = 0; i < dots.length; i++) {
+    for (let j = i + 1; j < dots.length; j++) {
+      const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(dots[i].x, dots[i].y);
+        ctx.lineTo(dots[j].x, dots[j].y);
+        ctx.strokeStyle = `hsla(270,100%,70%,${.12 * (1 - dist/120)})`;
+        ctx.lineWidth = .5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
