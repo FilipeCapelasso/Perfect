@@ -552,6 +552,80 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--purple-dim); border-radius: 3px; }
 </style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Designer overrides: aplicar paleta vermelho/azul, fontes, brilhos e animações */
+:root{
+  --bg:#060608; --bg2:#09090f; --card:#0d0d17;
+  --red:#ff2443; --red2:#c4001d;
+  --blue:#00c3ff; --blue2:#0077ff;
+  --gold:#f0b429;
+  --border: rgba(255,36,67,.12);
+  --text:#e9e9f4; --muted:#aeb4d6;
+  --glow-red: 0 0 28px rgba(255,36,67,.45), 0 0 60px rgba(255,36,67,.18);
+  --glow-blue: 0 0 28px rgba(0,195,255,.38), 0 0 60px rgba(0,195,255,.12);
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Global typography override */
+html,body,body *{ font-family:var(--font-sans) !important; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale }
+h1,h2,h3,h4,h5,h6, .nav-logo, .hero-title, .card-title, .detail-name, .product-card .card-thumb-icon, .feat-group-title, .footer-logo { font-family:var(--font-display) !important; font-weight:700 !important }
+
+/* Page background and text */
+body{ background: linear-gradient(180deg,var(--bg), #04040a); color:var(--text) }
+
+/* NAV */
+.nav-logo{ background:linear-gradient(90deg,var(--red),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
+.nav-logo span{ color:var(--blue); -webkit-text-fill-color:var(--blue) }
+.nav-links a{ color:var(--muted) !important }
+.nav-links a:hover{ color:var(--blue) }
+.nav-discord{ border-color:var(--red2); color:var(--red2) }
+.nav-discord:hover{ background:linear-gradient(90deg,var(--red2),var(--red)); box-shadow:var(--glow-red); color:#fff }
+
+/* HERO */
+.hero-bg{ background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,36,67,.12) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 80% 50%, rgba(0,195,255,.08) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 20% 50%, rgba(255,36,67,.06) 0%, transparent 60%) }
+.hero-grid{ background-image: linear-gradient(rgba(255,36,67,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,195,255,.06) 1px, transparent 1px); }
+.hero-eyebrow{ color:var(--blue) }
+.hero-title .word-perfect{ background: linear-gradient(135deg,#fff 10%, var(--blue) 55%, var(--red) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter: drop-shadow(0 0 36px rgba(0,195,255,.18)) }
+.hero-title .word-cs2{ background: linear-gradient(90deg,var(--red),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
+
+/* Buttons */
+.btn-primary{ background: linear-gradient(90deg,var(--red),var(--blue)); box-shadow: var(--glow-red); }
+.btn-secondary{ border-color:var(--blue); color:var(--blue) }
+.btn-secondary:hover{ box-shadow: var(--glow-blue) }
+
+/* PRODUCTS / CARDS */
+.product-card{ border:1px solid rgba(255,36,67,.10); background: linear-gradient(180deg, rgba(13,13,32,.96), rgba(6,6,16,.98)) }
+.product-card::before{ background: linear-gradient(135deg, rgba(255,36,67,.05), rgba(0,195,255,.04)) }
+.product-card:hover{ border-color:var(--red); box-shadow: 0 0 36px rgba(255,36,67,.18), 0 20px 60px rgba(0,0,0,.6) }
+.card-thumb-glow{ background: radial-gradient(ellipse at center, rgba(255,36,67,.12), rgba(0,195,255,.06)) }
+.card-thumb-icon{ background: linear-gradient(90deg,var(--red),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter: drop-shadow(0 0 26px rgba(255,36,67,.22)) }
+
+/* card rings */
+.card-ring{ border:2px solid rgba(255,36,67,.28); box-shadow:0 0 18px rgba(255,36,67,.28); background:transparent }
+.card-ring:nth-child(2){ border-color: rgba(0,195,255,.28); box-shadow:0 0 20px rgba(0,195,255,.22); animation-direction:reverse; animation-duration:10s }
+
+/* badges, pills and CTAs */
+.card-badge{ background: linear-gradient(90deg,var(--red),var(--blue)); box-shadow: 0 0 14px rgba(255,36,67,.18); }
+.feat-pill{ background: rgba(255,36,67,.06); border:1px solid rgba(255,36,67,.12); color:var(--muted) }
+
+/* pricing */
+.price-card::before{ background: linear-gradient(90deg,var(--red),var(--blue)) }
+.price-card.recommended{ border-color: rgba(255,36,67,.36); box-shadow: 0 10px 36px rgba(255,36,67,.08) }
+.price-value{ background: linear-gradient(90deg,var(--red),var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
+
+/* footer */
+.footer-logo{ background: linear-gradient(90deg,var(--blue),var(--red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
+
+/* glitch tweaks */
+.glitch::before, .glitch::after { background: linear-gradient(135deg,#fff 30%, var(--red) 70%, var(--blue)); }
+
+/* subtle accessibility improvements */
+.card-desc, .feat-item, .card-starting{ color:var(--muted); opacity:.95 }
+
+</style>
 </head>
 <body>
 
@@ -1245,7 +1319,7 @@ for (let i = 0; i < 90; i++) {
     x: rand(0, W), y: rand(0, H),
     vx: rand(-.2, .2), vy: rand(-.15, .15),
     r: rand(.5, 2),
-    hue: Math.random() < .6 ? 270 : 190,
+    hue: Math.random() < .6 ? 350 : 200,
     alpha: rand(.2, .7)
   });
 }
@@ -1270,7 +1344,7 @@ function draw() {
         ctx.beginPath();
         ctx.moveTo(dots[i].x, dots[i].y);
         ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.strokeStyle = `hsla(270,100%,70%,${.12 * (1 - dist/120)})`;
+        ctx.strokeStyle = `hsla(${dots[i].hue},100%,70%,${.12 * (1 - dist/120)})`;
         ctx.lineWidth = .5;
         ctx.stroke();
       }
