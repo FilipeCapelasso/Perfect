@@ -429,11 +429,31 @@
     margin-bottom: .75rem;
   }
   .price-value {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 900; font-size: 2.2rem;
-    color: #fff; line-height: 1;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.25rem, 4vw, 2.75rem);
+    color: #fff;
+    line-height: 1.25;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: .35rem;
+    letter-spacing: .035em;
+    white-space: nowrap;
+    overflow: visible;
+    padding: .15rem .35rem .05rem;
+    font-variant-numeric: tabular-nums;
+    text-rendering: geometricPrecision;
   }
-  .price-value .currency { font-size: .8rem; vertical-align: super; color: var(--muted); }
+  .price-value .currency {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    line-height: 1;
+    vertical-align: baseline;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
   .price-btn {
     display: block; width: 100%;
     margin-top: 1.5rem;
@@ -1203,7 +1223,7 @@ function showPage(id) {
 
 function openDiscord() {
   // Replace with actual Discord link
-  window.open('https://discord.gg/', '_blank');
+  window.open('https://discord.com/invite/SKw2xe3hU2', '_blank');
 }
 
 // ── PARTICLES ──
